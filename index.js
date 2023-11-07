@@ -32,7 +32,61 @@ async function run() {
     //await client.connect();
      
     const foodCollection = client.db('RestaurentDB').collection('FoodItems');
+    const myAddedItems = client.db('RestaurentDB').collection('myItems');
+
+   
     
+
+       app.post('/myItems',async(req,res) =>{
+        const newItem = req.body;
+        console.log(newItem);
+        const result = await myAddedItems.insertOne(newItem);
+        res.send(result);
+
+    })
+
+
+    app.get('/myItems',async(req,res)=>{
+      const cursor = myAddedItems.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+
+    app.get('/myItems/update/:id', async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await  myAddedItems.findOne(query);
+      res.send(result)
+    })
+
+
+
+    app.put('/myItems/update/:id',async(req,res) =>  {
+      const id = req.params.id;
+      const filter ={_id: new ObjectId(id)}
+      const options = {upsert:true};
+      const updatedProduct = req.body;
+      const products = {
+     
+        $set: {
+          name : updatedProduct.name,
+          foodCategory : updatedProduct.foodCategor,
+          quantity: updatedProduct.quantity,
+          price: updatedProduct.price,
+          details: updatedProduct.details,
+          image: updatedProduct.image,
+          origin:updatedProduct.origin,
+          addby:updatedProduct.addby,
+          email:updatedProduct.email
+
+
+        }
+      }
+      const result = await myAddedItems.updateOne(filter,products,options);
+      res.send(result);
+})
+
 
     app.get('/FoodItems',async(req,res)=>{
       const cursor = foodCollection.find();
@@ -40,7 +94,7 @@ async function run() {
       res.send(result);
     })
 
-  
+    
 
     // Send a ping to confirm a successful connection
     //await client.db("admin").command({ ping: 1 });
