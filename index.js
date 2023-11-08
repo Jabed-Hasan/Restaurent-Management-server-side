@@ -35,8 +35,6 @@ async function run() {
     const myAddedItems = client.db('RestaurentDB').collection('myItems');
     const purchaseItems = client.db('RestaurentDB').collection('purchaseItems');
 
-   
-    
 
        app.post('/myItems',async(req,res) =>{
         const newItem = req.body;
@@ -89,11 +87,11 @@ async function run() {
 })
 
 
-    app.get('/FoodItems',async(req,res)=>{
-      const cursor = foodCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
-    })
+    // app.get('/FoodItems',async(req,res)=>{
+    //   const cursor = foodCollection.find();
+    //   const result = await cursor.toArray();
+    //   res.send(result);
+    // })
 
 
     app.get('/food-detail/:id', async(req,res)=>{
@@ -136,7 +134,18 @@ async function run() {
   })
 
 
+  app.get('/FoodItems', async (req, res) => {
+    const page = parseInt(req.query.page);
+    const size = parseInt(req.query.size);
+    const skip = (page - 1) * size;
 
+    try {
+      const foods = await foodCollection.find().skip(skip).limit(size).toArray();
+      res.json(foods);
+    } catch (error) {
+      res.status(500).json({ error: 'Error fetching data' });
+    }
+  });
     
 
     
@@ -157,4 +166,3 @@ app.get ('/',(req,res) => {
 app.listen(port,() => {
    console.log(`RestuarantServer is runing on port: ${port}`)
 })
-
