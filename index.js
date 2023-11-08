@@ -31,8 +31,9 @@ async function run() {
     
     //await client.connect();
      
-    const foodCollection = client.db('RestaurentDB').collection('FoodItems');
+    const foodCollection = client.db('RestaurentDB').collection('foodItem');
     const myAddedItems = client.db('RestaurentDB').collection('myItems');
+    const purchaseItems = client.db('RestaurentDB').collection('purchaseItems');
 
    
     
@@ -59,7 +60,7 @@ async function run() {
       const result = await  myAddedItems.findOne(query);
       res.send(result)
     })
-
+    
 
 
     app.put('/myItems/update/:id',async(req,res) =>  {
@@ -94,9 +95,31 @@ async function run() {
       res.send(result);
     })
 
+
+    app.get('/food-detail/:id', async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await  foodCollection.findOne(query);
+      res.send(result)
+    })
+
+    app.get('/food-detail/purchase/:id', async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await  foodCollection.findOne(query);
+      res.send(result)
+    })
+
+
     
 
-    // Send a ping to confirm a successful connection
+
+
+
+
+    
+
+    
     //await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
