@@ -112,6 +112,25 @@ async function run() {
 
 
     
+    app.post('/food-detail/purchase/:id',async(req,res) =>{
+      const newItem = req.body;
+      console.log(newItem);
+      const result = await purchaseItems.insertOne(newItem);
+      res.send(result);
+
+  })
+
+
+  app.get('/Carts',async(req,res)=>{
+    const cursor = purchaseItems.find();
+    const result = await cursor.toArray();
+    res.send(result);
+  })
+
+
+
+
+    
 
 
 
